@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Gym">
+  <title>Gym</title>
+  <style>
+    /* ── Tokens ──────────────────────────────────────────────── */
+    :root {
+      --bg:      #111111;
+      --fg:      #FFFFFF;
+      --mid:     rgba(255,255,255,0.36);
+      --dim:     rgba(255,255,255,0.14);
+      --rule:    rgba(255,255,255,0.08);
+    }
+    .light {
+      --bg:      #F4F4F4;
+      --fg:      #111111;
+      --mid:     rgba(0,0,0,0.36);
+      --dim:     rgba(0,0,0,0.14);
+      --rule:    rgba(0,0,0,0.08);
+    }
+
+    /* ── Reset ───────────────────────────────────────────────── */
+    *, *::before, *::after {
+      box-sizing: border-box; margin: 0; padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text',
+                   'SF Pro Display', 'Helvetica Neue', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100dvh;
+      padding-bottom: max(40px, env(safe-area-inset-bottom));
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .page {
+      max-width: 390px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Top bar ─────────────────────────────────────────────── */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: max(20px, env(safe-area-inset-top));
+      padding-bottom: 4px;
+    }
+
+    .topbar-date {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--mid);
+    }
+
+    .theme-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      line-height: 1;
+      opacity: 0.5;
+      padding: 4px;
+      color: var(--fg);
+      display: flex;
+      align-items: center;
+    }
+
+    /* ── Streak ──────────────────────────────────────────────── */
+    .streak {
+      margin-top: 28px;
+      margin-bottom: 32px;
+    }
+
+    .streak-number {
+      font-size: 64px;
+      font-weight: 700;
+      letter-spacing: -2px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .streak-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 14px;
+    }
+
+    .streak-dots {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .dot-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--fg);
+      transition: opacity 0.2s;
+    }
+
+    .dot.empty {
+      background: none;
+      border: 1px solid var(--dim);
+    }
+
+    .dot-day {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--mid);
+    }
+
+    /* ── Workout header ──────────────────────────────────────── */
+    .workout-header {
+      margin-bottom: 32px;
+    }
+
+    .workout-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 6px;
+    }
+
+    .workout-name {
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -1.2px;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .workout-focus {
+      font-size: 14px;
+      color: var(--mid);
+      font-weight: 400;
+    }
+
+    /* ── Tier ────────────────────────────────────────────────── */
+    .tier {
+      margin-bottom: 28px;
+    }
+
+    .tier-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tier-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--rule);
+    }
+
+    /* ── Exercise rows ───────────────────────────────────────── */
+    .exercise + .exercise {
+      border-top: 1px solid var(--rule);
+      margin-top: 16px;
+      padding-top: 16px;
+    }
+
+    .exercise {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .ex-left  { flex: 1; min-width: 0; }
+    .ex-right { flex-shrink: 0; text-align: right; }
+
+    .ex-name {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--fg);
+      letter-spacing: -0.2px;
+      margin-bottom: 3px;
+    }
+
+    .ex-meta {
+      font-size: 12px;
+      color: var(--mid);
+      font-weight: 400;
+    }
+
+    .ex-status {
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      color: var(--mid);
+    }
+
+    .ex-weight {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.8px;
+      line-height: 1;
+      color: var(--fg);
+    }
+
+    .ex-unit {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--mid);
+      display: block;
+      text-align: right;
+      margin-top: 2px;
+    }
+
+    /* ── Rest day ────────────────────────────────────────────── */
+    .rest {
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 20px 0;
+    }
+
+    .rest-big {
+      font-size: 52px;
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      margin-bottom: 8px;
+    }
+
+    .rest-sub {
+      font-size: 15px;
+      color: var(--mid);
+      margin-bottom: 32px;
+    }
+
+    .rest-next {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 4px;
+    }
+
+    .rest-next-name {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.4px;
+    }
+
+    /* ── Footer ──────────────────────────────────────────────── */
+    .footer {
+      margin-top: 40px;
+      font-size: 11px;
+      color: var(--dim);
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+<div class="page" id="app"></div>
+
+<script>
+// ─── Data ─────────────────────────────────────────────────────────────────
+
+const WORKOUTS = {
+  1: {
+    name: 'Push A',
+    focus: 'Strength focus',
+    tiers: [
+      { label: 'T1 · Main Lift', exercises: [
+        { name: 'Bench Press',       scheme: '5 × 3+',  weight: 82.5, status: 'Fail 1 of 2 — hold weight'     },
+      ]},
+      { label: 'T2 · Secondary', exercises: [
+        { name: 'Overhead Press',    scheme: '4 × 10',  weight: 45,   status: 'Add 2.5 kg'                    },
+      ]},
+      { label: 'T3 · Accessory', exercises: [
+        { name: 'Close-Grip Bench',  scheme: '3 × 15+', weight: 45,   status: 'Add 2.5 kg'                    },
+        { name: 'Lateral Raises',    scheme: '3 × 15+', weight: 20.5, status: 'Add 2.5 kg'                    },
+        { name: 'Tricep Pushdowns',  scheme: '3 × 15+', weight: 51,   status: 'Add 2.5 kg'                    },
+      ]},
+    ]
+  },
+  2: {
+    name: 'Pull A',
+    focus: 'Strength focus',
+    tiers: [
+      { label: 'T1 · Main Lift', exercises: [
+        { name: 'Weighted Pull-ups', scheme: '6 × 2',   weight: 5,    status: '2 fails — dropped to 6×2'     },
+      ]},
+      { label: 'T2 · Secondary', exercises: [
+        { name: 'Barbell Row',       scheme: '4 × 10',  weight: 87.5, status: 'Add 2.5 kg'                   },
+      ]},
+      { label: 'T3 · Accessory', exercises: [
+        { name: 'Face Pulls',        scheme: '3 × 15+', weight: 50,   status: 'Add 2.5 kg'                   },
+        { name: 'Hammer Curls',      scheme: '3 × 15+', weight: 19.5, status: 'Add 2.5 kg'                   },
+        { name: 'Cable Row',         scheme: '3 × 15+', weight: 37.5, status: 'Add 2.5 kg'                   },
+      ]},
+    ]
+  },
+  3: {
+    name: 'Legs A',
+    focus: 'Strength focus',
+    tiers: [
+      { label: 'T1 · Main Lift', exercises: [
+        { name: 'Squat',             scheme: '5 × 3+',  weight: 97.5, status: 'Under-load — held at 97.5 kg' },
+      ]},
+      { label: 'T2 · Secondary', exercises: [
+        { name: 'Romanian Deadlift', scheme: '4 × 10',  weight: 72.5, status: 'Under-load — held at 72.5 kg' },
+      ]},
+      { label: 'T3 · Accessory', exercises: [
+        { name: 'Leg Press',         scheme: '3 × 15+', weight: 122.5,status: 'Under-load — held at 122.5 kg'},
+        { name: 'Leg Curl',          scheme: '3 × 15+', weight: 50,   status: 'Add 2.5 kg'                   },
+        { name: 'Calf Raises',       scheme: '3 × 15+', weight: 35,   status: 'Add 2.5 kg'                   },
+      ]},
+    ]
+  },
+  4: {
+    name: 'Push B',
+    focus: 'Volume focus',
+    tiers: [
+      { label: 'T1 · Main Lift', exercises: [
+        { name: 'Overhead Press',    scheme: '5 × 3+',  weight: 57.5, status: 'Add 2.5 kg'                   },
+      ]},
+      { label: 'T2 · Secondary', exercises: [
+        { name: 'Bench Press',       scheme: '4 × 10',  weight: 67.5, status: 'Add 2.5 kg'                   },
+      ]},
+      { label: 'T3 · Accessory', exercises: [
+        { name: 'Incline Machine',   scheme: '3 × 15+', weight: 45,   status: 'Under-load — held at 45 kg'   },
+        { name: 'Lateral Raises',    scheme: '3 × 15+', weight: 20.5, status: 'Add 2.5 kg'                   },
+        { name: 'Tricep Pushdowns',  scheme: '3 × 15+', weight: 51,   status: 'Add 2.5 kg'                   },
+      ]},
+    ]
+  },
+  5: {
+    name: 'Day 5',
+    focus: 'Pull B + Legs B',
+    tiers: [
+      { label: 'T1 · Main Lift', exercises: [
+        { name: 'Deadlift',          scheme: '5 × 3+',  weight: 85,   status: 'Add 5 kg'                     },
+      ]},
+      { label: 'T2 · Secondary', exercises: [
+        { name: 'Weighted Pull-ups', scheme: '4 × 10',  weight: 2.5,  status: 'Add 2.5 kg'                   },
+      ]},
+      { label: 'T3 · Accessory', exercises: [
+        { name: 'Barbell Curl',      scheme: '3 × 15+', weight: 22.5, status: 'Add 2.5 kg'                   },
+        { name: 'Face Pulls',        scheme: '3 × 15+', weight: 50,   status: 'Add 2.5 kg'                   },
+        { name: 'Leg Curl',          scheme: '3 × 15+', weight: 50,   status: 'Add 2.5 kg'                   },
+      ]},
+    ]
+  }
+};
+
+// Streak data — regenerated daily by scheduled task
+// days: array of bools for Mon → Fri this week (oldest → newest)
+const STREAK = { count: 3, week: [false, false, true, true, true] };
+
+const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const WDAYS  = ['M','T','W','T','F'];
+
+// ─── Theme ────────────────────────────────────────────────────────────────
+
+const savedTheme = localStorage.getItem('gym-theme');
+let dark = savedTheme ? savedTheme === 'dark'
+                      : window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+const SUN  = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg>`;
+const MOON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+
+function applyTheme() {
+  document.body.classList.toggle('light', !dark);
+  const btn = document.querySelector('.theme-btn');
+  if (btn) btn.innerHTML = dark ? SUN : MOON;
+}
+
+function toggleTheme() {
+  dark = !dark;
+  localStorage.setItem('gym-theme', dark ? 'dark' : 'light');
+  applyTheme();
+}
+
+// ─── HTML builders ────────────────────────────────────────────────────────
+
+function buildStreak() {
+  const dots = STREAK.week.map((hit, i) => `
+    <div class="dot-group">
+      <div class="dot ${hit ? '' : 'empty'}"></div>
+      <div class="dot-day">${WDAYS[i]}</div>
+    </div>`).join('');
+  return `
+    <div class="streak">
+      <div class="streak-number">${STREAK.count}</div>
+      <div class="streak-label">Day Streak</div>
+      <div class="streak-dots">${dots}</div>
+    </div>`;
+}
+
+function buildExercise(ex) {
+  const wStr = ex.weight === 0 ? 'BW' : ex.weight;
+  const unit  = ex.weight === 0 ? ''  : '<span class="ex-unit">kg</span>';
+  return `
+    <div class="exercise">
+      <div class="ex-left">
+        <div class="ex-name">${ex.name}</div>
+        <div class="ex-meta">${ex.scheme}</div>
+        <div class="ex-status">${ex.status}</div>
+      </div>
+      <div class="ex-right">
+        <div class="ex-weight">${wStr}</div>
+        ${unit}
+      </div>
+    </div>`;
+}
+
+function buildTier(t) {
+  return `
+    <div class="tier">
+      <div class="tier-label">${t.label}</div>
+      ${t.exercises.map(buildExercise).join('')}
+    </div>`;
+}
+
+function buildWorkout(w, dateStr) {
+  return `
+    <div class="topbar">
+      <div class="topbar-date">${dateStr}</div>
+      <button class="theme-btn" onclick="toggleTheme()"></button>
+    </div>
+    ${buildStreak()}
+    <div class="workout-header">
+      <div class="workout-label">Today's Session</div>
+      <div class="workout-name">${w.name}</div>
+      <div class="workout-focus">${w.focus}</div>
+    </div>
+    ${w.tiers.map(buildTier).join('')}
+    <div class="footer">GZCLP · 5-Day</div>`;
+}
+
+function buildRest(dateStr) {
+  return `
+    <div class="topbar">
+      <div class="topbar-date">${dateStr}</div>
+      <button class="theme-btn" onclick="toggleTheme()"></button>
+    </div>
+    ${buildStreak()}
+    <div class="rest">
+      <div class="rest-big">Rest</div>
+      <div class="rest-sub">Recovery is part of the work.</div>
+      <div class="rest-next">Next session</div>
+      <div class="rest-next-name">Monday — Push A</div>
+    </div>`;
+}
+
+// ─── Render ───────────────────────────────────────────────────────────────
+
+function render() {
+  const now = new Date();
+  // For preview: force Monday. Remove this line once hosted live.
+  now.setDate(now.getDate() + (1 + 7 - now.getDay()) % 7 || 7);
+
+  const day     = now.getDay();
+  const dateStr = `${DAYS[day]} ${now.getDate()} ${MONTHS[now.getMonth()]}`;
+  const w       = WORKOUTS[day];
+
+  document.getElementById('app').innerHTML = w
+    ? buildWorkout(w, dateStr)
+    : buildRest(dateStr);
+  applyTheme();
+}
+
+render();
+</script>
+</body>
+</html>
