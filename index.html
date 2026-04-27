@@ -6,7 +6,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Gym">
-  <link rel="apple-touch-icon" href="icon.png">
   <title>Gym</title>
   <style>
     :root {
@@ -62,14 +61,14 @@
 <body>
 <div class="page" id="app"></div>
 <script>
-  const DATE_STR     = "Sunday 26 April";
+  const DATE_STR     = "Monday 27 April";
   const STREAK_COUNT = 3;
-  const STREAK_WEEK  = [false, false, true, true, true];
-  const MODE         = "rest";
-  const WNAME        = "";
-  const WFOCUS       = "";
-  const TIERS        = [];
-  const NEXT_NAME    = "Monday — Push A";
+  const STREAK_WEEK  = [false, false, false, false, false];
+  const MODE         = "workout";
+  const WNAME        = "Push A";
+  const WFOCUS       = "Strength focus";
+  const TIERS        = [{"label": "T1 \u00b7 Main Lift", "exercises": [{"name": "Bench Press", "scheme": "5 \u00d7 3+", "weight": 82.5, "status": "hold", "note": "Fail 1/2 \u2014 hold 82.5 kg"}]}, {"label": "T2 \u00b7 Secondary", "exercises": [{"name": "Overhead Press", "scheme": "4 \u00d7 10", "weight": 45.0, "status": "progress", "note": "Add 2.5 kg \u2192 45.0 kg"}]}, {"label": "T3 \u00b7 Accessory", "exercises": [{"name": "Close-Grip Bench", "scheme": "3 \u00d7 15+", "weight": 45.0, "status": "progress", "note": "Add 2.5 kg \u2192 45.0 kg"}, {"name": "Lateral Raises", "scheme": "3 \u00d7 15+", "weight": 20.5, "status": "progress", "note": "Add 2.5 kg \u2192 20.5 kg (Push B)"}, {"name": "Tricep Pushdowns", "scheme": "3 \u00d7 15+", "weight": 51.0, "status": "progress", "note": "Add 2.5 kg \u2192 51.0 kg (Push B)"}]}];
+  const NEXT_NAME    = "";
   const WDAYS        = ["M","T","W","T","F"];
 
   const SUN  = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg>`;
