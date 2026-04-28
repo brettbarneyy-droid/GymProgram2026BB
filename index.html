@@ -61,13 +61,13 @@
 <body>
 <div class="page" id="app"></div>
 <script>
-  const DATE_STR     = "Monday 27 April";
-  const STREAK_COUNT = 3;
+  const DATE_STR     = "Tuesday 28 April";
+  const STREAK_COUNT = 0;
   const STREAK_WEEK  = [false, false, false, false, false];
   const MODE         = "workout";
-  const WNAME        = "Push A";
+  const WNAME        = "Pull A";
   const WFOCUS       = "Strength focus";
-  const TIERS        = [{"label": "T1 \u00b7 Main Lift", "exercises": [{"name": "Bench Press", "scheme": "5 \u00d7 3+", "weight": 82.5, "status": "hold", "note": "Fail 1/2 \u2014 hold 82.5 kg"}]}, {"label": "T2 \u00b7 Secondary", "exercises": [{"name": "Overhead Press", "scheme": "4 \u00d7 10", "weight": 45.0, "status": "progress", "note": "Add 2.5 kg \u2192 45.0 kg"}]}, {"label": "T3 \u00b7 Accessory", "exercises": [{"name": "Close-Grip Bench", "scheme": "3 \u00d7 15+", "weight": 45.0, "status": "progress", "note": "Add 2.5 kg \u2192 45.0 kg"}, {"name": "Lateral Raises", "scheme": "3 \u00d7 15+", "weight": 20.5, "status": "progress", "note": "Add 2.5 kg \u2192 20.5 kg (Push B)"}, {"name": "Tricep Pushdowns", "scheme": "3 \u00d7 15+", "weight": 51.0, "status": "progress", "note": "Add 2.5 kg \u2192 51.0 kg (Push B)"}]}];
+  const TIERS        = [{"label": "T1 \u00b7 Main Lift", "exercises": [{"name": "Weighted Pull-ups", "scheme": "6 \u00d7 2", "weight": 5.0, "status": "drop", "note": "2 fails \u2192 drop to 6\u00d72 at 5.0 kg"}]}, {"label": "T2 \u00b7 Secondary", "exercises": [{"name": "Barbell Row", "scheme": "4 \u00d7 10", "weight": 87.5, "status": "progress", "note": "Add 2.5 kg \u2192 87.5 kg"}]}, {"label": "T3 \u00b7 Accessory", "exercises": [{"name": "Face Pulls", "scheme": "3 \u00d7 15+", "weight": 50.0, "status": "progress", "note": "Day 5 Y \u2192 Add 2.5 kg \u2192 50.0 kg"}, {"name": "Hammer Curls", "scheme": "3 \u00d7 15+", "weight": 19.5, "status": "progress", "note": "Add 2.5 kg \u2192 19.5 kg"}, {"name": "Cable Row", "scheme": "3 \u00d7 15+", "weight": 37.5, "status": "progress", "note": "Add 2.5 kg \u2192 37.5 kg"}]}];
   const NEXT_NAME    = "";
   const WDAYS        = ["M","T","W","T","F"];
 
